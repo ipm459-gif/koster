@@ -2159,7 +2159,7 @@ function renderSteps() {
   }).join('<li class="sep">·</li>');
   rail.querySelectorAll('[data-step]').forEach(b => b.addEventListener('click', () => {
     step = Number(b.dataset.step);
-    render();
+    render({ top: true });
   }));
 }
 
@@ -2480,7 +2480,7 @@ function stepSkills() {
 
   const expertise = budget.expertiseCount ? `
     <div class="panel" style="margin-top:1rem">
-      <div class="panel-title"><h3>Экспертиза</h3><span class="hint">${state.skills.expertise.length} из ${budget.expertiseCount}</span></div>
+      <div class="panel-title"><h3>Экспертиза</h3><span class="hint" id="expertise-count">${state.skills.expertise.length} из ${budget.expertiseCount}</span></div>
       <p class="dim" style="font-size:.9rem">Удвоенный бонус мастерства. Выбирать можно только среди навыков с владением.</p>
       <div class="grid grid-2">
         ${SKILLS.filter(s => state.skills.proficiencies.includes(s.id)).map(s => `
@@ -2494,7 +2494,7 @@ function stepSkills() {
 
   return `
     <div class="panel">
-      <div class="panel-title"><h2>Навыки</h2><span class="hint">выбрано ${picked.length} из ${budget.totalPicks}</span></div>
+      <div class="panel-title"><h2>Навыки</h2><span class="hint" id="skill-pick-count">выбрано ${picked.length} из ${budget.totalPicks}</span></div>
       <p class="dim" style="font-size:.9rem">Класс даёт ${budget.classCount} навык(а)${budget.extra ? `, раса и подкласс ещё ${budget.extra}` : ''}. Навыки предыстории отмечены отдельно.</p>
       <div class="grid grid-2">${list}</div>
     </div>
@@ -2625,12 +2625,12 @@ function stepSpells() {
     </div>
 
     <div class="panel" style="margin-top:1rem">
-      <div class="panel-title"><h3>Заговоры</h3><span class="hint">${state.spells.cantrips.length} из ${cantripMax}</span></div>
+      <div class="panel-title"><h3>Заговоры</h3><span class="hint" id="cantrip-count">${state.spells.cantrips.length} из ${cantripMax}</span></div>
       <div class="grid grid-2">${cantripRows || '<p class="muted">Нет доступных заговоров</p>'}</div>
     </div>
 
     <div class="panel" style="margin-top:1rem">
-      <div class="panel-title"><h3>Заклинания</h3><span class="hint">${state.spells.known.length} из ${knownMax}</span></div>
+      <div class="panel-title"><h3>Заклинания</h3><span class="hint" id="spell-known-count">${state.spells.known.length} из ${knownMax}</span></div>
       ${levelBlocks}
     </div>`;
 }
@@ -2684,8 +2684,82 @@ function stepSummary() {
     </div>`;
 }
 
+// ── Точечные обновления без перерисовки шага ──────────────
+// Нужны, чтобы выбор заклинания или навыка не сбрасывал прокрутку
+// и не стирал введённый фильтр.
+function refreshSpellUI() {
+  const host = $('#step');
+  const c = cls();
+  if (!host || !c?.spellcasting) return;
+  const d = derive(state);
+  const cantripMax = d.cantripsMax;
+  const knownMax = c.spellcasting.kind === 'known' ? d.knownCount : d.preparedCount;
+
+  const apply = (selector, list, max) => {
+    host.querySelectorAll(selector).forEach(cb => {
+      const id = cb.dataset.cantrip || cb.dataset.spell;
+      const on = list.includes(id);
+      const full = list.length >= max;
+      cb.checked = on;
+      cb.disabled = !on && full;
+      const label = cb.closest('label');
+      if (label) {
+        label.classList.toggle('checked', on);
+        label.style.opacity = (!on && full) ? '.45' : '';
+      }
+    });
+  };
+
+  apply('[data-cantrip]', state.spells.cantrips, cantripMax);
+  apply('[data-spell]', state.spells.known, knownMax);
+
+  const cc = document.getElementById('cantrip-count');
+  if (cc) cc.textContent = `${state.spells.cantrips.length} из ${cantripMax}`;
+  const kc = document.getElementById('spell-known-count');
+  if (kc) kc.textContent = `${state.spells.known.length} из ${knownMax}`;
+}
+
+function refreshSkillUI() {
+  const host = $('#step');
+  if (!host) return;
+  const budget = skillBudget();
+  const picked = state.skills.proficiencies.filter(id => !budget.fixed.has(id));
+
+  host.querySelectorAll('[data-skill]').forEach(cb => {
+    const id = cb.dataset.skill;
+    const isFixed = budget.fixed.has(id);
+    const on = state.skills.proficiencies.includes(id);
+    const allowed = budget.allowed.includes(id) || budget.extra;
+    cb.checked = on || isFixed;
+    cb.disabled = isFixed || (!on && (picked.length >= budget.totalPicks || !allowed));
+    const label = cb.closest('label');
+    if (label) {
+      label.classList.toggle('checked', on || isFixed);
+      label.style.opacity = (cb.disabled && !isFixed) ? '.45' : '';
+    }
+  });
+
+  host.querySelectorAll('[data-exp]').forEach(cb => {
+    const id = cb.dataset.exp;
+    const on = state.skills.expertise.includes(id);
+    cb.checked = on;
+    cb.disabled = !on && state.skills.expertise.length >= budget.expertiseCount;
+    const label = cb.closest('label');
+    if (label) label.classList.toggle('checked', on);
+  });
+
+  const pc = document.getElementById('skill-pick-count');
+  if (pc) pc.textContent = `выбрано ${picked.length} из ${budget.totalPicks}`;
+  const ec = document.getElementById('expertise-count');
+  if (ec) ec.textContent = `${state.skills.expertise.length} из ${budget.expertiseCount}`;
+}
+
 // ── Главный рендер ────────────────────────────────────────
-function render() {
+// opts.top — прокрутить наверх (только при смене шага).
+// Во всех остальных случаях сохраняем позицию: выбор расы или заклинания
+// не должен «подбрасывать» страницу.
+function render(opts = {}) {
+  const scrollY = window.scrollY;
   renderSteps();
   const host = $('#step');
   const map = { base: stepBase, race: stepRace, class: stepClass, background: stepBackground, abilities: stepAbilities, skills: stepSkills, equipment: stepEquipment, spells: stepSpells, summary: stepSummary };
@@ -2697,7 +2771,8 @@ function render() {
   bindStep();
   renderPreview();
   persist();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (opts.top) window.scrollTo({ top: 0, behavior: 'smooth' });
+  else window.scrollTo({ top: scrollY, behavior: 'auto' });
 }
 
 function bindStep() {
@@ -2821,16 +2896,20 @@ function bindStep() {
   // навыки
   host.querySelectorAll('[data-skill]').forEach(cb => cb.addEventListener('change', () => {
     const id = cb.dataset.skill;
+    const hadExpertise = state.skills.expertise.includes(id);
     if (cb.checked) state.skills.proficiencies.push(id);
     else state.skills.proficiencies = state.skills.proficiencies.filter(s => s !== id);
     state.skills.expertise = state.skills.expertise.filter(s => state.skills.proficiencies.includes(s));
-    render();
+    if (hadExpertise) render();      // список экспертизы меняется — перерисовываем шаг
+    else { refreshSkillUI(); renderPreview(); persist(); }
   }));
   host.querySelectorAll('[data-exp]').forEach(cb => cb.addEventListener('change', () => {
     const id = cb.dataset.exp;
     if (cb.checked) state.skills.expertise.push(id);
     else state.skills.expertise = state.skills.expertise.filter(s => s !== id);
-    render();
+    refreshSkillUI();
+    renderPreview();
+    persist();
   }));
 
   // снаряжение
@@ -2873,13 +2952,17 @@ function bindStep() {
     const id = cb.dataset.cantrip;
     if (cb.checked) state.spells.cantrips.push(id);
     else state.spells.cantrips = state.spells.cantrips.filter(s => s !== id);
-    render();
+    refreshSpellUI();
+    renderPreview();
+    persist();
   }));
   host.querySelectorAll('[data-spell]').forEach(cb => cb.addEventListener('change', () => {
     const id = cb.dataset.spell;
     if (cb.checked) state.spells.known.push(id);
     else state.spells.known = state.spells.known.filter(s => s !== id);
-    render();
+    refreshSpellUI();
+    renderPreview();
+    persist();
   }));
 
   // сохранение
@@ -2921,10 +3004,10 @@ if (editId) {
 render();
 
 $('#btn-next').addEventListener('click', () => {
-  if (step < STEPS.length - 1) { step += 1; render(); }
+  if (step < STEPS.length - 1) { step += 1; render({ top: true }); }
 });
 $('#btn-prev').addEventListener('click', () => {
-  if (step > 0) { step -= 1; render(); }
+  if (step > 0) { step -= 1; render({ top: true }); }
 });
 $('#btn-save').addEventListener('click', doSave);
 $('#btn-reset').addEventListener('click', () => {
