@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Мои персонажи — Костёр</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">🔥</span>
+      <span>Костёр<small>D&amp;D 5e · 2014</small></span>
+    </a>
+    <nav class="nav">
+      <a href="index.html">Главная</a>
+      <a href="builder.html">Создать персонажа</a>
+      <a href="characters.html" class="active">Мои персонажи</a>
+      <a href="compendium.html">Справочник</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" style="padding-bottom:3rem">
+  <div class="builder-head">
+    <div>
+      <p class="eyebrow" style="margin-bottom:.15rem">Сохранённые герои</p>
+      <h1 style="margin:0;font-size:1.7rem">Мои персонажи</h1>
+    </div>
+    <div style="margin-left:auto;display:flex;gap:.5rem;flex-wrap:wrap">
+      <input type="file" id="import-file" accept="application/json" hidden>
+      <button class="btn btn-sm btn-ghost" id="btn-import">Импорт из файла</button>
+      <a class="btn btn-sm btn-primary" href="builder.html">+ Новый персонаж</a>
+    </div>
+  </div>
+  <div id="list" class="grid grid-auto"></div>
+</main>
+
+<script src="dist/characters.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Создание персонажа — Костёр</title>
+<meta name="description" content="Пошаговый конструктор персонажа D&D 5e (2014): раса, класс, предыстория, характеристики, навыки, снаряжение, заклинания.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">🔥</span>
+      <span>Костёр<small>D&amp;D 5e · 2014</small></span>
+    </a>
+    <nav class="nav">
+      <a href="index.html">Главная</a>
+      <a href="builder.html" class="active">Создать персонажа</a>
+      <a href="characters.html">Мои персонажи</a>
+      <a href="compendium.html">Справочник</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="builder-head">
+    <div>
+      <p class="eyebrow" style="margin-bottom:.15rem">Конструктор персонажа</p>
+      <h1 style="margin:0;font-size:1.7rem" id="builder-title">Новый герой</h1>
+    </div>
+    <div style="margin-left:auto;display:flex;gap:.5rem;flex-wrap:wrap">
+      <button class="btn btn-sm btn-ghost" id="btn-reset">Сбросить</button>
+      <button class="btn btn-sm" id="btn-save">Сохранить персонажа</button>
+    </div>
+  </div>
+
+  <ol class="steps" id="steps"></ol>
+
+  <div class="builder-grid">
+    <section id="step" aria-live="polite"></section>
+
+    <aside class="aside-sticky">
+      <div class="panel" id="preview"></div>
+      <div class="panel" style="margin-top:1rem">
+        <p class="eyebrow">Подсказка</p>
+        <p class="dim" style="font-size:.86rem;margin:.35rem 0 0" id="step-hint"></p>
+      </div>
+    </aside>
+  </div>
+
+  <div style="display:flex;gap:.6rem;justify-content:space-between;margin:1.4rem 0 3rem;flex-wrap:wrap">
+    <button class="btn" id="btn-prev">← Назад</button>
+    <div style="display:flex;gap:.6rem">
+      <button class="btn btn-primary" id="btn-next">Далее →</button>
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <p>Правила приведены по SRD 5.1 (CC BY 4.0), редакция 2014 года. Спорные случаи решает Мастер.</p>
+  </div>
+</footer>
+
+<script src="dist/builder.js" defer></script>
+</body>
+</html>

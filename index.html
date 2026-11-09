@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Костёр — конструктор персонажей D&D 5e</title>
+<meta name="description" content="Конструктор персонажей Dungeons & Dragons 5e (2014): раса, класс, характеристики, навыки, снаряжение и заклинания. Пошаговое создание и готовый лист персонажа на русском.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">🔥</span>
+      <span>Костёр<small>D&amp;D 5e · 2014</small></span>
+    </a>
+    <nav class="nav">
+      <a href="index.html" class="active">Главная</a>
+      <a href="builder.html">Создать персонажа</a>
+      <a href="characters.html">Мои персонажи</a>
+      <a href="compendium.html">Справочник</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <p class="eyebrow">Правила пятой редакции · 2014</p>
+    <h1>Соберите героя, который переживёт первую сессию</h1>
+    <p class="lead">
+      Пошаговый конструктор персонажа для Dungeons &amp; Dragons 5e: раса, класс, предыстория,
+      характеристики, навыки, снаряжение и заклинания. Все расчёты — модификаторы, КД, хиты,
+      спасброски, ячейки заклинаний — считаются автоматически. Готовый лист можно распечатать
+      или сохранить в файл.
+    </p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="builder.html">Начать создание →</a>
+      <a class="btn btn-ghost" href="compendium.html">Сначала посмотреть справочник</a>
+    </div>
+  </section>
+
+  <section class="grid grid-3" style="margin:1.6rem 0 2.2rem">
+    <div class="feature">
+      <div class="glyph">⚔</div>
+      <h3>Девять рас, двенадцать классов</h3>
+      <p>От холмового дварфа до тифлинга, от варвара до волшебника. Уровни 1–10 и подклассы основной книги правил.</p>
+    </div>
+    <div class="feature">
+      <div class="glyph">🎲</div>
+      <h3>Три способа характеристик</h3>
+      <p>Покупка за очки (27 очков), стандартный набор или честный бросок 4d6 без худшего кубика прямо в браузере.</p>
+    </div>
+    <div class="feature">
+      <div class="glyph">📜</div>
+      <h3>Сразу готовый лист</h3>
+      <p>Хиты, КД, инициатива, пассивная внимательность, атаки с бонусами, ячейки заклинаний и весь инвентарь с весом.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="chars-title">
+    <div class="panel-title">
+      <h2 id="chars-title">Мои персонажи</h2>
+      <span class="hint" id="chars-hint">загружаю…</span>
+    </div>
+    <div id="characters" class="grid grid-auto"></div>
+  </section>
+
+  <section style="margin-top:2.2rem">
+    <div class="panel">
+      <div class="panel-title"><h3>Что внутри справочника</h3></div>
+      <div class="grid grid-2">
+        <div>
+          <p class="dim" style="margin-bottom:.6rem">
+            Расы и подрасы, классы с умениями по уровням, предыстории, 18 навыков, оружие, доспехи,
+            наборы снаряжения, заклинания заговоров и с 1 по 5 круг, а также состояния и краткая
+            шпаргалка по действиям в бою.
+          </p>
+          <p class="muted" style="font-size:.86rem;margin:0">
+            Правила соответствуют редакции 2014 года. Тексты даны в сокращении — для спорных ситуаций
+            сверяйтесь с книгой правил и решением Мастера.
+          </p>
+        </div>
+        <div>
+          <table class="tbl">
+            <tbody>
+              <tr><td>Расы</td><td class="num">9</td></tr>
+              <tr><td>Классы</td><td class="num">12</td></tr>
+              <tr><td>Предыстории</td><td class="num">13</td></tr>
+              <tr><td>Заклинания (0–5 круг)</td><td class="num" id="spell-count">—</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <p>«Костёр» — некоммерческий конструктор для домашних игр. Dungeons &amp; Dragons — товарный знак Wizards of the Coast.</p>
+    <p>Правила и термины приведены по System Reference Document 5.1 (CC BY 4.0). Тексты сокращены и пересказаны по-русски.</p>
+  </div>
+</footer>
+
+<script src="dist/index.js" defer></script>
+</body>
+</html>

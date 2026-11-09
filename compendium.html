@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Справочник — Костёр</title>
+<meta name="description" content="Справочник D&D 5e на русском: расы, классы, предыстории, навыки, оружие, доспехи, снаряжение, заклинания и состояния.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">🔥</span>
+      <span>Костёр<small>D&amp;D 5e · 2014</small></span>
+    </a>
+    <nav class="nav">
+      <a href="index.html">Главная</a>
+      <a href="builder.html">Создать персонажа</a>
+      <a href="characters.html">Мои персонажи</a>
+      <a href="compendium.html" class="active">Справочник</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" style="padding-bottom:3rem">
+
+  <div class="builder-head">
+    <div>
+      <p class="eyebrow" style="margin-bottom:.15rem">Правила 2014</p>
+      <h1 style="margin:0;font-size:1.7rem">Справочник</h1>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-bottom:1rem">
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:.8rem" id="tabs"></div>
+    <input type="search" id="q" placeholder="Поиск по названию и тексту…">
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.7rem" id="filters"></div>
+  </div>
+
+  <p class="muted" id="count" style="font-size:.86rem;margin:0 0 .8rem"></p>
+  <div id="content"></div>
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <p>Тексты сокращены и пересказаны по System Reference Document 5.1 (CC BY 4.0). Dungeons &amp; Dragons — товарный знак Wizards of the Coast.</p>
+  </div>
+</footer>
+
+<script src="dist/compendium.js" defer></script>
+</body>
+</html>
