@@ -1861,7 +1861,18 @@ function attackBonus(ch, d, weapon) {
 function attacksOf(ch, d) {
   const eq = equipmentList(ch);
   const weapons = eq.filter(e => e.item.cat === 'weapon');
-  const out = weapons.map(w => ({ ...attackBonus(ch, d, w.item), name: w.item.name, item: w.item }));
+  const out = weapons.map(w => {
+    const base = attackBonus(ch, d, w.item);
+    // Оружие договора (Pact of the Blade) даёт владение этим оружием
+    if (w.pactWeapon && !base.proficient) {
+      const isRanged = w.item.kind?.includes('дальнобойное');
+      const finesse = (w.item.props || []).some(p => p.startsWith('Фехтовальное'));
+      const useDex = isRanged || (finesse && d.mods.dex > d.mods.str);
+      const abilityMod = useDex ? d.mods.dex : d.mods.str;
+      return { ...base, attack: abilityMod + d.pb, proficient: true, pact: true };
+    }
+    return base;
+  }).map((a, i) => ({ ...a, name: weapons[i].item.name, item: weapons[i].item, pact: weapons[i].pactWeapon || a.pact }));
   if (!out.length && d.cls) {
     const monkDie = d.cls.id === 'monk'
       ? (d.level >= 11 ? '1d8' : d.level >= 5 ? '1d6' : '1d4')
@@ -2232,7 +2243,7 @@ function render() {
           <table class="tbl">
             <thead><tr><th>Предмет</th><th class="num">Кол.</th><th class="num">Вес</th></tr></thead>
             <tbody>
-              ${eq.map(e => `<tr><td>${esc(e.item.name)}${ch.equippedArmor === e.id ? ' <span class="chip chip-green">надето</span>' : ''}</td>
+              ${eq.map(e => `<tr><td>${esc(e.item.name)}${ch.equippedArmor === e.id ? ' <span class="chip chip-green">надето</span>' : ''}${e.pactWeapon ? ' <span class="chip chip-gold">оружие договора</span>' : ''}</td>
                 <td class="num">${e.qty}</td><td class="num">${e.item.weight ? (e.item.weight * e.qty).toFixed(1) : '—'}</td></tr>`).join('')}
             </tbody>
           </table>
